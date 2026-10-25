@@ -56,7 +56,7 @@
       <div class="handshake__face"><img src="assets/img/neumann-face.webp" alt="นอยมันน์"></div>
       <div class="handshake__body">
         <p class="handshake__who">neumann.ai <span>สำเนาที่ 07</span></p>
-        <p class="handshake__msg">ยินดีต้อนรับ ผู้มาเยือน ฉันคือสำเนา AI ของนอยมันน์ ผู้นำแห่งป่าแห่งวีรชน<br>คุณกำลังจะเปิดแฟ้มของ <b>เฟย์ล่า</b> ยืนยันไหม?</p>
+        <p class="handshake__msg">ยินดีต้อนรับ ผู้มาเยือน ฉันคือสำเนา AI ของนอยมันน์<br>คุณกำลังจะเปิดแฟ้มของ <b>เฟย์ล่า</b> ยืนยันไหม?</p>
         <div class="handshake__actions">
           <button class="btn btn--hot" id="openSound" type="button">เปิดแฟ้ม พร้อมเสียง</button>
           <button class="btn" id="openSilent" type="button">เปิดแบบเงียบ</button>
@@ -129,15 +129,8 @@
 
           <div class="profile__block profile__cat">
             <h2 class="label">สัตว์ที่ชอบ</h2>
-            <button class="cat" id="cat" type="button" aria-label="ลูบแมว">
-              <span class="cat__ear cat__ear--l"></span><span class="cat__ear cat__ear--r"></span>
-              <span class="cat__head">
-                <span class="cat__eye cat__eye--l">0</span><span class="cat__eye cat__eye--r">1</span>
-                <span class="cat__nose"></span><span class="cat__blush cat__blush--l"></span><span class="cat__blush cat__blush--r"></span>
-              </span>
-              <span class="cat__body"></span><span class="cat__tail"></span>
-            </button>
-            <p class="cat__caption">แมวตัวนุ่มนิ่ม <span id="petCount">ยังไม่มีใครลูบ</span></p>
+            <div class="cats" id="cats"></div>
+            <p class="cat__caption">แมวตัวนุ่มนิ่ม แตะเพื่อลูบ <span id="petCount">ยังไม่มีใครลูบ</span></p>
           </div>
         </div>
       </article>
@@ -209,6 +202,7 @@
             <h2 class="lock__title">โสดสนิท</h2>
             <p class="lock__sub">โสดชัดเจน ไม่มีคนคุย และไม่ต้องเข้าหา ไม่ต้องการ ♡</p>
             <button class="btn btn--deny" id="requestBtn" type="button">ส่งคำขอเข้าถึงหัวใจ</button>
+            <p class="lock__reply" id="lockReply" aria-live="polite"></p>
             <p class="lock__count" id="denyCount">ยังไม่มีคำขอที่ถูกปฏิเสธ</p>
           </div>
         </div>

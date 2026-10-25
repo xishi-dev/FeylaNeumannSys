@@ -527,10 +527,48 @@
     Petals.burstFrom(s, 14);
   }));
 
-  // cat.exe
+  // cat.exe: a small family of cats, each with its own colours, eyes and first reaction
+  const CATS = [
+    { name: 'บิต', fur: '#EEF4F7', line: '#0F0D35', ear: '#FF6FB5', eye: '#3B5BFF', eyes: ['0', '1'], hi: 'บิตชอบให้เกาใต้คางที่สุด' },
+    { name: 'ไบต์', fur: '#1B1740', line: '#A9B2E0', ear: '#8B3DFF', eye: '#5FE3D0', glow: '0 0 6px #5FE3D0', eyes: ['1', '0'], hi: 'ไบต์ทำเป็นไม่สน แต่หางกระดิกไม่หยุด' },
+    { name: 'พิกเซล', fur: '#C9C3E6', line: '#0F0D35', ear: '#FF6FB5', eye: '#3B5BFF', eyes: ['0', '0'], sleepy: true, hi: 'พิกเซลตื่นแล้ว... แล้วก็หลับต่อ' },
+    { name: 'แคช', fur: '#FFF3E0', line: '#0F0D35', ear: '#FF6FB5', eye: '#3B5BFF', patch: '#FF9F3D', eyes: ['1', '1'], hi: 'แคชจำคุณไว้ในหน่วยความจำแล้ว' },
+  ];
+  const catsBox = $('#cats');
+  CATS.forEach((c, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'cat-wrap';
+    wrap.innerHTML = `
+      <button class="cat${c.sleepy ? ' is-sleep' : ''}" type="button" aria-label="ลูบแมวชื่อ${c.name}"
+        style="--fur:${c.fur};--line:${c.line};--ear:${c.ear};--eye:${c.eye};${c.glow ? `--glow:${c.glow};` : ''}${c.patch ? `--patch:${c.patch};` : ''}--tail-delay:${-i * 0.55}s">
+        <span class="cat__ear cat__ear--l"></span><span class="cat__ear cat__ear--r"></span>
+        <span class="cat__head">
+          <span class="cat__patch"></span>
+          <span class="cat__eye cat__eye--l">${c.sleepy ? '–' : c.eyes[0]}</span><span class="cat__eye cat__eye--r">${c.sleepy ? '–' : c.eyes[1]}</span>
+          <span class="cat__nose"></span><span class="cat__blush cat__blush--l"></span><span class="cat__blush cat__blush--r"></span>
+        </span>
+        <span class="cat__body"></span><span class="cat__tail"></span><span class="cat__zz" aria-hidden="true">z z</span>
+      </button>
+      <span class="cat-wrap__name">${c.name}</span>`;
+    const btn = $('.cat', wrap);
+    btn._cat = c;
+    catsBox.append(wrap);
+  });
+
+  const setEyes = (btn, l, r) => { const [a, b] = $$('.cat__eye', btn); a.textContent = l; b.textContent = r; };
+  // cats blink now and then (sleepy Pixel stays asleep)
+  if (!reduce) (function blink() {
+    gsap.delayedCall(rand(1.5, 4), () => {
+      const btn = pick($$('.cat:not(.is-sleep)'));
+      if (btn) { setEyes(btn, '–', '–'); setTimeout(() => setEyes(btn, ...btn._cat.eyes), 160); }
+      blink();
+    });
+  })();
+
   let pets = store.get('feyla.pets', 0);
   const petLabel = () => ($('#petCount').textContent = pets ? `ถูกลูบไปแล้ว ${pets.toLocaleString()} ครั้ง` : 'ยังไม่มีใครลูบ');
   petLabel();
+  const greeted = new Set();
   const PET_LINES = {
     1: 'แมวตัวนี้ได้รับสิทธิ์ผู้ดูแลระบบแล้ว',
     5: 'ระดับความนุ่มนิ่มเพิ่มขึ้น 5%',
@@ -538,13 +576,23 @@
     25: 'คุณลูบแมวมากกว่าอ่านแฟ้มอีก',
     50: 'ตรวจพบผู้ใช้ติดแมวขั้นรุนแรง',
   };
-  $('#cat').addEventListener('click', e => {
+  catsBox.addEventListener('click', e => {
+    const cat = e.target.closest('.cat');
+    if (!cat) return;
     pets++;
     store.set('feyla.pets', pets);
     petLabel();
     Sound.purr();
-    const cat = e.currentTarget;
     cat.classList.remove('is-purr'); void cat.offsetWidth; cat.classList.add('is-purr');
+    const info = cat._cat;
+    if (info.sleepy) {
+      // Pixel opens its eyes for a moment, then falls back asleep
+      cat.classList.remove('is-sleep');
+      setEyes(cat, ...info.eyes);
+      clearTimeout(cat._nap);
+      cat._nap = setTimeout(() => { cat.classList.add('is-sleep'); setEyes(cat, '–', '–'); }, 2200);
+    }
+    if (!greeted.has(info.name)) { greeted.add(info.name); say(info.hi); }
     const r = cat.getBoundingClientRect();
     for (let i = 0; i < 6; i++) {
       const hrt = document.createElement('i');
@@ -554,8 +602,8 @@
       gsap.set(hrt, { x: r.left + r.width / 2 + rand(-30, 30), y: r.top + 20 });
       gsap.to(hrt, { y: `-=${rand(60, 120)}`, x: `+=${rand(-40, 40)}`, rotation: rand(-30, 30), autoAlpha: 0, duration: rand(0.9, 1.4), ease: 'power2.out', onComplete: () => hrt.remove() });
     }
-    const line = PET_LINES[pets] || (pets > 50 && pets % 50 === 0 ? `ลูบครบ ${pets} ครั้ง แมวตัวนี้เป็นของคุณแล้วในทางเทคนิค` : null);
-    if (line) say(line);
+    const line = PET_LINES[pets] || (pets > 50 && pets % 50 === 0 ? `ลูบครบ ${pets} ครั้ง แมวทั้งบ้านเป็นของคุณแล้วในทางเทคนิค` : null);
+    if (line && pets > 1) say(line);
   });
 
   /* ---------- firewall ---------- */
@@ -622,6 +670,28 @@
     'ฉันคำนวณโอกาสสำเร็จแล้ว ได้ 0.00%',
     'ส่งคำขอซ้ำเกินกำหนด ระบบส่งกลีบกุหลาบกลับไปแทน',
   ];
+  // Feyla's own words, shown under the button in random order (never the same line twice in a row)
+  const REPLIES = [
+    'อย่ามายุ่ง ฉันไม่ได้สนใจ',
+    'เธอดีไม่พอสำหรับฉันหรอก',
+    'อย่ามาเสนอหน้าให้รำคาญ',
+    'ฉันไม่ชอบของที่ไม่ได้เลือกเอง',
+    'เลิกเพ้อเจ้อเถอะ ฉันไม่มีวันชอบเธอ',
+    'ช่วยเอาความมั่นใจกลับไปด้วย ฉันไม่ได้ขอ',
+    'อย่ามาใกล้ ฉันรังเกียจ',
+    'ตื๊อไปก็เท่านั้น ฉันไม่เอา',
+    'ฉันเมินขนาดนี้ ยังไม่รู้ตัวอีกเหรอ',
+  ];
+  let replyBag = [];
+  let lastReply = '';
+  function nextReply() {
+    if (!replyBag.length) {
+      replyBag = REPLIES.slice().sort(() => Math.random() - 0.5);
+      if (replyBag[0] === lastReply) replyBag.push(replyBag.shift());
+    }
+    lastReply = replyBag.shift();
+    return lastReply;
+  }
   $('#requestBtn').addEventListener('click', e => {
     denied++;
     Sound.deny();
@@ -630,7 +700,9 @@
     const win = e.currentTarget.closest('.win');
     gsap.fromTo(win, { x: -10 }, { x: 0, duration: 0.6, ease: 'elastic.out(1, .25)' });
     $('#denyCount').textContent = `คำขอที่ถูกปฏิเสธ: ${denied} ครั้ง`;
-    say(DENY_LINES[(denied - 1) % DENY_LINES.length], 'deny');
+    scramble($('#lockReply'), nextReply(), 0.55);
+    // the AI copy chimes in now and then, so the two voices don't talk over each other
+    if (denied === 1 || denied % 3 === 0) say(DENY_LINES[Math.floor(denied / 3) % DENY_LINES.length], 'deny');
   });
 
   /* ---------- ports + ending ---------- */
