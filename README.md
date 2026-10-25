@@ -16,7 +16,8 @@ Then open http://localhost:5174.
 - Plain HTML, CSS and JavaScript, no build step
 - [GSAP](https://gsap.com/) (ScrollTrigger, Draggable) and [Lenis](https://lenis.darkroom.engineering/) for motion and smooth scrolling
 - Rose petals are drawn on a canvas; UI sounds are synthesized with the Web Audio API (`js/sound.js`), and the soundtrack runs through a lowpass filter for muffled moments
-- `assets/img/hd` holds AI upscales (Real-ESRGAN) as 1920px and 3840px WebP, swapped in after the small image paints
+- `assets/img/hd` holds AI upscales (Real-ESRGAN) as WebP
+- The hero monitor plays `assets/video/eye-loop` (WebM, MP4 fallback): a 1.9s clip of the opening cut into a seamless loop with a 0.4s crossfade back to its start
 
 ## Credits
 

@@ -360,6 +360,32 @@
     track.innerHTML = [...items, ...items, ...items, ...items].map(t => `<span>${t}</span>`).join('');
   })();
 
+  /* ---------- the eye on the hero monitor ----------
+     The client's clip of the opening, cut into a seamless loop (assets/video).
+     It plays only while on screen, a little slower for weight, and glitches now and then. */
+  (function eyeScreen() {
+    const screen = $('#eye');
+    const vid = $('#eyeVid');
+    let visible = true;
+    vid.playbackRate = 0.85;
+    vid.addEventListener('loadedmetadata', () => (vid.playbackRate = 0.85));
+    if (reduce) { vid.removeAttribute('autoplay'); vid.pause(); return; }
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      visible ? vid.play().catch(() => {}) : vid.pause();
+    }).observe(screen);
+
+    (function glitch() {
+      gsap.delayedCall(rand(3.5, 6.5), () => {
+        if (visible) {
+          screen.classList.remove('is-glitch'); void screen.offsetWidth; screen.classList.add('is-glitch');
+          gsap.fromTo($('.eye__flash', screen), { opacity: 0.55 }, { opacity: 0, duration: 0.5, ease: 'power2.out' });
+        }
+        glitch();
+      });
+    })();
+  })();
+
   // nicknames cycle
   const ALIASES = ['ไป๋ลั่ว', 'ลั่วซาน', 'ปัง', 'หรงหรง'];
   let aliasI = 0;
@@ -435,7 +461,14 @@
     ScrollTrigger.create({
       trigger: '#end', start: 'top 60%', once: true,
       onEnter: () => {
-        if (!reduce) gsap.from('.end__face', { scale: 0.4, rotation: -8, autoAlpha: 0, filter: 'blur(10px)', duration: 1.2, ease: 'back.out(2)' });
+        if (!reduce) {
+          gsap.from('.end__face', { scale: 0.4, rotation: -8, autoAlpha: 0, filter: 'blur(10px)', duration: 1.2, ease: 'back.out(2)' });
+          gsap.from('.end__line', { autoAlpha: 0, y: 40, skewX: -12, duration: 1, delay: 0.4, ease: 'expo.out', onComplete: () => {
+            Sound.glitch();
+            const line = $('.end__line');
+            (function again() { line.classList.remove('is-glitch'); void line.offsetWidth; line.classList.add('is-glitch'); gsap.delayedCall(rand(3, 6), again); })();
+          } });
+        }
         say('ปิดการเชื่อมต่อแล้ว แต่สำเนาของฉันยังอยู่ในโทรศัพท์ของคุณนะ');
       },
     });

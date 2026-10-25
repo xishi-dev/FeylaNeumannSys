@@ -80,8 +80,12 @@
           <a class="btn btn--hot hero__cta" href="#profile">เปิดแฟ้มโปรไฟล์</a>
         </div>
         <div class="monitor" id="heroMonitor">
-          <div class="monitor__screen">
-            <img src="assets/img/neumann.jpg" data-hd="assets/img/hd/neumann" alt="นอยมันน์ เด็กสาวผมขาวมีเขาบนวีลแชร์ กลีบกุหลาบแดงลอยรอบตัว ฉากหลังเป็นจอคอมนับร้อย">
+          <div class="monitor__screen eye" id="eye">
+            <video class="eye__vid" id="eyeVid" autoplay muted loop playsinline preload="auto" poster="assets/img/eye-poster.jpg" aria-label="ดวงตาของนอยมันน์จากฉากเปิด ม่านตาเป็นปริซึม มีควันสีชมพูระเบิด แล้วเห็นนอยมันน์สะท้อนอยู่ในตา ตัวเลข 0 กับ 1 ไหลผ่าน">
+              <source src="assets/video/eye-loop.webm" type="video/webm">
+              <source src="assets/video/eye-loop.mp4" type="video/mp4">
+            </video>
+            <div class="eye__flash" aria-hidden="true"></div>
             <div class="monitor__glare"></div>
           </div>
           <div class="monitor__tag"><svg viewBox="0 0 64 48" aria-hidden="true"><use href="#horns"/></svg>Neumann</div>
@@ -229,8 +233,8 @@
 
     <!-- END -->
     <section class="end" id="end" data-file="/forest/feyla/logout">
-      <div class="end__face"><img src="assets/img/neumann-face.webp" alt="นอยมันน์ มองมาด้วยดวงตา 0 กับ 1"></div>
-      <p class="end__line">ระวังจะติดใจโดยไม่รู้ตัวนะ ♠</p>
+      <div class="end__face"><img src="assets/img/hd/close-1024.webp" srcset="assets/img/hd/close-1024.webp 1x, assets/img/hd/close-2048.webp 2x" alt="นอยมันน์หันมามองด้วยสายตาเย็นชา กลีบกุหลาบแดงลอยอยู่รอบคอ"></div>
+      <p class="end__line" data-text="Stay away from me.">Stay away from me.</p>
       <p class="end__sub">การเชื่อมต่อกับแฟ้มของเฟย์ล่ากำลังจะปิด</p>
       <button class="btn" id="reconnect" type="button">เชื่อมต่อใหม่ตั้งแต่ต้น</button>    </section>
 
