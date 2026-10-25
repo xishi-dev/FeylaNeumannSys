@@ -476,6 +476,34 @@ html.js .win { visibility: hidden; }
 .cat__ear::after { content: ""; position: absolute; left: -10px; top: 9px; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 18px solid var(--ear); }
 .cat__ear--l { left: 24px; transform: rotate(-18deg); }
 .cat__ear--r { left: 76px; transform: rotate(18deg); }
+/* grey mackerel tabby (แมวสลิด): forehead M, cheek stripes, banded body,
+   pale muzzle and chest, dark-tipped tail. Stripes stay clear of the eyes. */
+.cat--tabby .cat__head {
+  background:
+    radial-gradient(30px 17px at 46px 52px, var(--light) 96%, transparent),
+    linear-gradient(var(--stripe), var(--stripe)) 36px 0 / 4px 13px,
+    linear-gradient(var(--stripe), var(--stripe)) 44px 0 / 4px 16px,
+    linear-gradient(var(--stripe), var(--stripe)) 52px 0 / 4px 13px,
+    linear-gradient(var(--stripe), var(--stripe)) 28px 2px / 3px 8px,
+    linear-gradient(var(--stripe), var(--stripe)) 60px 2px / 3px 8px,
+    linear-gradient(var(--stripe), var(--stripe)) 0 34px / 13px 3px,
+    linear-gradient(var(--stripe), var(--stripe)) 0 41px / 10px 3px,
+    linear-gradient(var(--stripe), var(--stripe)) 79px 34px / 13px 3px,
+    linear-gradient(var(--stripe), var(--stripe)) 82px 41px / 10px 3px,
+    var(--fur);
+  background-repeat: no-repeat;
+}
+.cat--tabby .cat__body {
+  background:
+    radial-gradient(22px 14px at 37px 30px, var(--light) 96%, transparent),
+    repeating-linear-gradient(90deg, var(--stripe) 0 4px, transparent 4px 11px),
+    var(--fur);
+}
+.cat--tabby .cat__ear { border-bottom-color: var(--fur); }
+.cat--tabby .cat__ear::after { border-bottom-color: var(--ear); }
+.cat--tabby .cat__tail { border-top-color: var(--fur); border-right-color: var(--stripe); }
+.cat--tabby .cat__eye { text-shadow: 0 0 0 transparent, 1px 1px 0 var(--line); }
+
 .cat__eye { position: absolute; top: 22px; font: 700 15px/1 var(--f-mono); color: var(--eye); text-shadow: var(--glow, none); }
 .cat__zz { position: absolute; left: 104px; top: 4px; font: 600 14px var(--f-mono); color: var(--mist); opacity: 0; }
 .cat.is-sleep .cat__zz { animation: zz 2.4s ease-in-out infinite; }

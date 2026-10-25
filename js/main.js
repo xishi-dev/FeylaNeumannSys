@@ -529,18 +529,19 @@
 
   // cat.exe: a small family of cats, each with its own colours, eyes and first reaction
   const CATS = [
-    { name: 'บิต', fur: '#EEF4F7', line: '#0F0D35', ear: '#FF6FB5', eye: '#3B5BFF', eyes: ['0', '1'], hi: 'บิตชอบให้เกาใต้คางที่สุด' },
-    { name: 'ไบต์', fur: '#1B1740', line: '#A9B2E0', ear: '#8B3DFF', eye: '#5FE3D0', glow: '0 0 6px #5FE3D0', eyes: ['1', '0'], hi: 'ไบต์ทำเป็นไม่สน แต่หางกระดิกไม่หยุด' },
-    { name: 'พิกเซล', fur: '#C9C3E6', line: '#0F0D35', ear: '#FF6FB5', eye: '#3B5BFF', eyes: ['0', '0'], sleepy: true, hi: 'พิกเซลตื่นแล้ว... แล้วก็หลับต่อ' },
-    { name: 'แคช', fur: '#FFF3E0', line: '#0F0D35', ear: '#FF6FB5', eye: '#3B5BFF', patch: '#FF9F3D', eyes: ['1', '1'], hi: 'แคชจำคุณไว้ในหน่วยความจำแล้ว' },
+    { name: 'เทาเทา', fur: '#EEF4F7', line: '#0F0D35', ear: '#FF6FB5', eye: '#3B5BFF', eyes: ['0', '1'], hi: 'เทาเทาชอบให้เกาใต้คางที่สุด' },
+    { name: 'ถ้วยฟู', fur: '#1B1740', line: '#A9B2E0', ear: '#8B3DFF', eye: '#5FE3D0', glow: '0 0 6px #5FE3D0', eyes: ['1', '0'], hi: 'ถ้วยฟูทำเป็นไม่สน แต่หางกระดิกไม่หยุด' },
+    // ลูลู่ and ลาล่า are grey mackerel tabbies (แมวสลิด): silver and darker grey
+    { name: 'ลูลู่', fur: '#ABA6AF', stripe: '#4A4652', light: '#E6E2E8', line: '#1E1C26', ear: '#FF8FC0', eye: '#F4B63F', coat: 'tabby', eyes: ['0', '0'], sleepy: true, hi: 'ลูลู่ตื่นแล้ว... แล้วก็หลับต่อ' },
+    { name: 'ลาล่า', fur: '#86807F', stripe: '#2E2B30', light: '#DAD3CD', line: '#1E1C26', ear: '#FF8FC0', eye: '#F4B63F', coat: 'tabby', eyes: ['1', '1'], hi: 'ลาล่าจำคุณไว้ในหน่วยความจำแล้ว' },
   ];
   const catsBox = $('#cats');
   CATS.forEach((c, i) => {
     const wrap = document.createElement('div');
     wrap.className = 'cat-wrap';
     wrap.innerHTML = `
-      <button class="cat${c.sleepy ? ' is-sleep' : ''}" type="button" aria-label="ลูบแมวชื่อ${c.name}"
-        style="--fur:${c.fur};--line:${c.line};--ear:${c.ear};--eye:${c.eye};${c.glow ? `--glow:${c.glow};` : ''}${c.patch ? `--patch:${c.patch};` : ''}--tail-delay:${-i * 0.55}s">
+      <button class="cat${c.sleepy ? ' is-sleep' : ''}${c.coat ? ` cat--${c.coat}` : ''}" type="button" aria-label="ลูบแมวชื่อ${c.name}"
+        style="--fur:${c.fur};--line:${c.line};--ear:${c.ear};--eye:${c.eye};${c.glow ? `--glow:${c.glow};` : ''}${c.stripe ? `--stripe:${c.stripe};--light:${c.light};` : ''}--tail-delay:${-i * 0.55}s">
         <span class="cat__ear cat__ear--l"></span><span class="cat__ear cat__ear--r"></span>
         <span class="cat__head">
           <span class="cat__patch"></span>
@@ -556,7 +557,7 @@
   });
 
   const setEyes = (btn, l, r) => { const [a, b] = $$('.cat__eye', btn); a.textContent = l; b.textContent = r; };
-  // cats blink now and then (sleepy Pixel stays asleep)
+  // cats blink now and then (the sleepy one stays asleep)
   if (!reduce) (function blink() {
     gsap.delayedCall(rand(1.5, 4), () => {
       const btn = pick($$('.cat:not(.is-sleep)'));
@@ -586,7 +587,7 @@
     cat.classList.remove('is-purr'); void cat.offsetWidth; cat.classList.add('is-purr');
     const info = cat._cat;
     if (info.sleepy) {
-      // Pixel opens its eyes for a moment, then falls back asleep
+      // the sleepy one opens its eyes for a moment, then falls back asleep
       cat.classList.remove('is-sleep');
       setEyes(cat, ...info.eyes);
       clearTimeout(cat._nap);
