@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feyla · Neumann.sys</title>
+  <meta name="description" content="แฟ้มลับของเฟย์ล่า เปิดโดยสำเนา AI ของนอยมันน์ แห่งป่าแห่งวีรชน">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Bodoni+Moda:ital,opsz,wght@1,6..96,500;1,6..96,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/img/neumann-face.webp">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="is-locked">
+
+  <canvas id="petals" aria-hidden="true"></canvas>
+  <div class="scan" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><i class="cursor__x"></i><i class="cursor__y"></i><b class="cursor__bit">0</b></div>
+  <div class="dl" aria-hidden="true"><i></i></div>
+
+  <!-- Neumann's AI copy talks here -->
+  <div class="chat" id="chat" role="status" aria-live="polite"></div>
+
+  <!-- HUD -->
+  <header class="hud" id="hud">
+    <a class="hud__brand" href="#hero" aria-label="กลับไปด้านบน">
+      <svg class="emblem" viewBox="0 0 64 48" aria-hidden="true"><use href="#horns"/></svg>
+      <span>neumann.sys</span>
+    </a>
+    <span class="hud__file" id="hudFile">/forest/feyla/</span>
+    <div class="vol" role="group" aria-label="ระดับเสียง">
+      <button class="vol__btn" id="volDown" type="button" aria-label="ลดเสียง">−</button>
+      <input class="vol__range" id="volRange" type="range" min="0" max="100" step="5" value="80" aria-label="ระดับเสียง">
+      <button class="vol__btn" id="volUp" type="button" aria-label="เพิ่มเสียง">+</button>
+      <output class="vol__val" id="volVal" for="volRange">80</output>
+    </div>
+    <button class="hud__sound" id="soundBtn" type="button" aria-pressed="false"><i class="bars" aria-hidden="true"><b></b><b></b><b></b><b></b></i><span>เสียงปิด</span></button>
+  </header>
+
+  <!-- shared SVG symbols -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="horns" viewBox="0 0 64 48">
+      <path d="M14 30 C4 26 2 14 8 4 C9 14 14 20 22 22 Z" fill="currentColor"/>
+      <path d="M50 30 C60 26 62 14 56 4 C55 14 50 20 42 22 Z" fill="currentColor"/>
+      <path d="M20 22 C24 18 40 18 44 22 C47 28 44 36 38 40 L26 40 C20 36 17 28 20 22 Z" fill="currentColor"/>
+      <circle cx="27" cy="44" r="2.6" fill="currentColor"/><circle cx="32" cy="45.5" r="2.6" fill="currentColor"/><circle cx="37" cy="44" r="2.6" fill="currentColor"/>
+      <rect x="25.5" y="26" width="4.5" height="6" rx="1" fill="var(--screen-ink, #07061A)"/>
+      <rect x="35" y="26" width="2" height="6" rx="1" fill="var(--screen-ink, #07061A)"/>
+    </symbol>
+  </svg>
+
+  <!-- BOOT -->
+  <div class="boot" id="boot">
+    <div class="term" id="term" aria-live="polite"></div>
+    <div class="handshake" id="handshake">
+      <div class="handshake__face"><img src="assets/img/neumann-face.webp" alt="นอยมันน์"></div>
+      <div class="handshake__body">
+        <p class="handshake__who">neumann.ai <span>สำเนาที่ 07</span></p>
+        <p class="handshake__msg">ยินดีต้อนรับ ผู้มาเยือน ฉันคือสำเนา AI ของนอยมันน์ ผู้นำแห่งป่าแห่งวีรชน<br>คุณกำลังจะเปิดแฟ้มของ <b>เฟย์ล่า</b> ยืนยันไหม?</p>
+        <div class="handshake__actions">
+          <button class="btn btn--hot" id="openSound" type="button">เปิดแฟ้ม พร้อมเสียง</button>
+          <button class="btn" id="openSilent" type="button">เปิดแบบเงียบ</button>
+        </div>
+      </div>
+    </div>
+    <button class="skip" id="skip" type="button">ข้ามการบูต</button>
+  </div>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section class="hero" id="hero" data-file="/forest/feyla/">
+      <div class="wall" id="wall" aria-hidden="true"></div>
+      <div class="hero__grid">
+        <div class="hero__copy">
+          <p class="hero__kicker">แฟ้มลับจากป่าแห่งวีรชน</p>
+          <h1 class="hero__name" data-text="Feyla">Feyla</h1>
+          <p class="hero__thai">เฟย์ล่า <span class="hero__aka">หรือ <b id="alias">ไป๋ลั่ว</b></span></p>
+          <p class="hero__line">ราชินีไซเบอร์ผู้ชอบสีม่วง แมวนุ่มนิ่ม และต้มผักกาดดอง<br>หน้าตาดูซื่อ ๆ แต่ระบบนี้เธอเป็นคนคุม</p>
+          <a class="btn btn--hot hero__cta" href="#profile">เปิดแฟ้มโปรไฟล์</a>
+        </div>
+        <div class="monitor" id="heroMonitor">
+          <div class="monitor__screen">
+            <img src="assets/img/neumann.jpg" data-hd="assets/img/hd/neumann" alt="นอยมันน์ เด็กสาวผมขาวมีเขาบนวีลแชร์ กลีบกุหลาบแดงลอยรอบตัว ฉากหลังเป็นจอคอมนับร้อย">
+            <div class="monitor__glare"></div>
+          </div>
+          <div class="monitor__tag"><svg viewBox="0 0 64 48" aria-hidden="true"><use href="#horns"/></svg>Neumann</div>
+        </div>
+      </div>
+      <div class="hero__ticker" aria-hidden="true"><div class="hero__tickerTrack"></div></div>
+    </section>
+
+    <!-- 01 PROFILE -->
+    <section class="file" id="profile" data-file="/forest/feyla/profile.dat">
+      <article class="win win--wide" data-win>
+        <header class="win__bar"><span class="win__path">C:/forest/feyla/profile.dat</span><span class="win__ctl" aria-hidden="true"><i></i><i></i><i></i></span></header>
+        <div class="win__body profile">
+          <div class="profile__block profile__names">
+            <h2 class="label">ชื่อเรียก</h2>
+            <ul class="names">
+              <li data-scramble>เฟย์ล่า</li>
+              <li data-scramble>ไป๋ลั่ว</li>
+              <li data-scramble>ลั่วซาน</li>
+              <li data-scramble>ปัง</li>
+              <li data-scramble>หรงหรง</li>
+            </ul>
+          </div>
+
+          <div class="profile__block profile__bday">
+            <h2 class="label">วันเกิด</h2>
+            <p class="bday"><span>17</span><i>·</i><span>02</span><i>·</i><span>2009</span></p>
+            <p class="bday__next">เลเวลอัปครั้งถัดไปในอีก <b id="countdown">--</b></p>
+          </div>
+
+          <div class="profile__block profile__colors">
+            <h2 class="label">สีที่ชอบ <small>แตะเพื่อเปลี่ยนธีมทั้งเว็บ</small></h2>
+            <div class="swatches">
+              <button class="swatch" type="button" style="--c:#8B3DFF" data-name="ม่วง" data-accent="#8B3DFF" aria-label="ม่วง"><span>ม่วง</span></button>
+              <button class="swatch" type="button" style="--c:#FF6FB5" data-name="ชมพู" data-accent="#FF6FB5" aria-label="ชมพู"><span>ชมพู</span></button>
+              <button class="swatch" type="button" style="--c:#4FB8FF" data-name="ฟ้า" data-accent="#4FB8FF" aria-label="ฟ้า"><span>ฟ้า</span></button>
+              <button class="swatch" type="button" style="--c:#EEF4F7" data-name="ขาว" data-accent="#EEF4F7" aria-label="ขาว"><span>ขาว</span></button>
+              <button class="swatch" type="button" style="--c:#0B0A1C" data-name="ดำ" data-accent="#9AA3C7" aria-label="ดำ"><span>ดำ</span></button>
+            </div>
+          </div>
+
+          <div class="profile__block profile__cat">
+            <h2 class="label">สัตว์ที่ชอบ</h2>
+            <button class="cat" id="cat" type="button" aria-label="ลูบแมว">
+              <span class="cat__ear cat__ear--l"></span><span class="cat__ear cat__ear--r"></span>
+              <span class="cat__head">
+                <span class="cat__eye cat__eye--l">0</span><span class="cat__eye cat__eye--r">1</span>
+                <span class="cat__nose"></span><span class="cat__blush cat__blush--l"></span><span class="cat__blush cat__blush--r"></span>
+              </span>
+              <span class="cat__body"></span><span class="cat__tail"></span>
+            </button>
+            <p class="cat__caption">แมวตัวนุ่มนิ่ม <span id="petCount">ยังไม่มีใครลูบ</span></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 02 FIREWALL -->
+    <section class="file" id="firewall" data-file="/forest/feyla/firewall.log">
+      <article class="win win--alert" data-win>
+        <header class="win__bar"><span class="win__path">C:/forest/feyla/firewall.log</span><span class="win__ctl" aria-hidden="true"><i></i><i></i><i></i></span></header>
+        <div class="win__body firewall">
+          <div class="shield" aria-hidden="true">
+            <svg viewBox="0 0 100 116"><path d="M50 4 L94 20 V56 C94 84 74 104 50 112 C26 104 6 84 6 56 V20 Z"/><path class="shield__x" d="M34 40 L66 72 M66 40 L34 72"/></svg>
+          </div>
+          <div class="firewall__main">
+            <h2 class="fw__title">ไฟร์วอลล์ทำงานอยู่</h2>
+            <p class="fw__sub">สิ่งที่ไม่ชอบแบบสุดหัวใจ ♡ ถูกบล็อกถาวร</p>
+            <ul class="threats">
+              <li class="threat"><span class="threat__tag">BLOCKED</span><span class="threat__name">กระเทียม</span><span class="threat__count"><b data-attempts="9213">0</b> ครั้งที่พยายามเข้า</span></li>
+              <li class="threat"><span class="threat__tag">BLOCKED</span><span class="threat__name">ไส้เดือน</span><span class="threat__count"><b data-attempts="4807">0</b> ครั้งที่พยายามเข้า</span></li>
+            </ul>
+            <pre class="fwlog" id="fwlog" aria-hidden="true"></pre>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 03 FOOD -->
+    <section class="file" id="food" data-file="/forest/feyla/favorite_food.cache">
+      <article class="win" data-win>
+        <header class="win__bar"><span class="win__path">C:/forest/feyla/favorite_food.cache</span><span class="win__ctl" aria-hidden="true"><i></i><i></i><i></i></span></header>
+        <div class="win__body food">
+          <h2 class="win__title">อาหารที่โหลดไว้ในแคช</h2>
+          <ul class="modules">
+            <li class="module" style="--p:100"><span class="module__file">comfort.dll</span><span class="module__name">ต้มผักกาดดอง</span><span class="module__bar"><i></i></span><span class="module__pct">100%</span></li>
+            <li class="module" style="--p:96"><span class="module__file">power.dll</span><span class="module__name">สเต๊ก</span><span class="module__bar"><i></i></span><span class="module__pct">96%</span></li>
+            <li class="module" style="--p:93"><span class="module__file">party.dll</span><span class="module__name">พิซซ่า</span><span class="module__bar"><i></i></span><span class="module__pct">93%</span></li>
+          </ul>
+          <p class="food__note">ต้มผักกาดดองโหลดเต็มร้อยเสมอ ระบบไม่อนุญาตให้ลบออกจากแคช</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- 04 PERSONALITY -->
+    <section class="file" id="personality" data-file="/forest/feyla/personality.enc">
+      <article class="win win--enc" data-win>
+        <header class="win__bar"><span class="win__path">C:/forest/feyla/personality.enc</span><span class="win__ctl" aria-hidden="true"><i></i><i></i><i></i></span></header>
+        <div class="win__body enc">
+          <p class="enc__state" id="encState">ไฟล์ถูกเข้ารหัส กำลังถอดรหัส...</p>
+          <div class="enc__text">
+            <p data-decrypt>หน้าตาดูซื่อ ๆ แต่เชื่อได้เหรอ ?</p>
+            <p data-decrypt>บางทีก็เจ้าเล่ห์ บางทีก็เอ๋อจริง</p>
+            <p data-decrypt>อยากรู้จักก็เข้ามาทักสิ</p>
+            <p data-decrypt class="enc__warn">ระวังจะติดใจโดยไม่รู้ตัวนะ ♠</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 05 RELATIONSHIP -->
+    <section class="file" id="status" data-file="/forest/feyla/relationship.lock">
+      <article class="win win--lock" data-win>
+        <header class="win__bar"><span class="win__path">C:/forest/feyla/relationship.lock</span><span class="win__ctl" aria-hidden="true"><i></i><i></i><i></i></span></header>
+        <div class="win__body lock">
+          <div class="lock__icon" aria-hidden="true">
+            <svg viewBox="0 0 80 96"><path class="lock__shackle" d="M20 42 V26 C20 14 29 6 40 6 C51 6 60 14 60 26 V42"/><rect x="8" y="42" width="64" height="48" rx="6"/><path class="lock__heart" d="M40 78 C30 70 25 65 25 59 C25 54 29 51 33 51 C36 51 38 53 40 56 C42 53 44 51 47 51 C51 51 55 54 55 59 C55 65 50 70 40 78 Z"/></svg>
+          </div>
+          <div class="lock__main">
+            <p class="lock__status">สถานะ</p>
+            <h2 class="lock__title">โสดสนิท</h2>
+            <p class="lock__sub">โสดชัดเจน ไม่มีคนคุย และไม่ต้องเข้าหา ไม่ต้องการ ♡</p>
+            <button class="btn btn--deny" id="requestBtn" type="button">ส่งคำขอเข้าถึงหัวใจ</button>
+            <p class="lock__count" id="denyCount">ยังไม่มีคำขอที่ถูกปฏิเสธ</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 06 PORTS -->
+    <section class="file" id="ports" data-file="/forest/feyla/open_ports.sh">
+      <article class="win" data-win>
+        <header class="win__bar"><span class="win__path">C:/forest/feyla/open_ports.sh</span><span class="win__ctl" aria-hidden="true"><i></i><i></i><i></i></span></header>
+        <div class="win__body ports">
+          <h2 class="win__title">ช่องทางที่เปิดอยู่</h2>
+          <p class="ports__sub">อยากรู้จักก็เข้ามาทักสิ เลือกพอร์ตที่จะเชื่อมต่อ</p>
+          <ul class="portlist">
+            <li><a class="port" href="https://www.instagram.com/saqezbid" target="_blank" rel="noopener"><span class="port__num">:443</span><span class="port__name">Instagram</span><span class="port__id">@saqezbid</span><span class="port__go">เชื่อมต่อ</span></a></li>
+            <li><a class="port" href="https://discord.gg/Sne3EZtN" target="_blank" rel="noopener"><span class="port__num">:6463</span><span class="port__name">Discord</span><span class="port__id">แอดเป็นเพื่อน</span><span class="port__go">เชื่อมต่อ</span></a></li>
+            <li><a class="port" href="https://www.tiktok.com/@cx2ket" target="_blank" rel="noopener"><span class="port__num">:8080</span><span class="port__name">TikTok</span><span class="port__id">@cx2ket</span><span class="port__go">เชื่อมต่อ</span></a></li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <!-- END -->
+    <section class="end" id="end" data-file="/forest/feyla/logout">
+      <div class="end__face"><img src="assets/img/neumann-face.webp" alt="นอยมันน์ มองมาด้วยดวงตา 0 กับ 1"></div>
+      <p class="end__line">ระวังจะติดใจโดยไม่รู้ตัวนะ ♠</p>
+      <p class="end__sub">การเชื่อมต่อกับแฟ้มของเฟย์ล่ากำลังจะปิด</p>
+      <button class="btn" id="reconnect" type="button">เชื่อมต่อใหม่ตั้งแต่ต้น</button>
+      <footer class="credit">ภาพนอยมันน์จากอนิเมะ มหาศึกวีรชนข้ามภพ (Petals of Reincarnation) เป็นลิขสิทธิ์ของเจ้าของผลงาน ใช้ในเว็บส่วนตัวนี้ด้วยความชื่นชอบ เพลงประกอบ: Muse โดย Isabel LaRosa</footer>
+    </section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
